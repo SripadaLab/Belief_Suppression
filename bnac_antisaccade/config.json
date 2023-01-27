@@ -1,0 +1,16 @@
+{
+    "cognitive_atlas_task_id": "",
+    "instructions":"Respond to the stimuli on the screen.",
+    "description":"Expfactory experiment",
+    "url":"https://github.com/SripadaLab/BNAC_cognitive_battery/tree/main/antisaccade",
+    "contributors": [
+        "Alex Weigard",
+        "Chandra Sripada",
+        "Mike Angstadt"
+    ],
+    "exp_id": "bnac_antisaccade",
+    "name": "Antisaccade",
+    "reference": [""],
+    "template": "jspsych",
+    "time": 15
+}

@@ -29,6 +29,25 @@
     margin-right: auto;
 }
 
+.prompt {
+  width:100%;
+  height 100vw;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  font-size: 36px;
+  font-weight: bold;
+  line-height: 120%;
+}
+
+.truth {
+	color: #00FF00;
+}
+
+.lie { 
+	color: #FF0000;	
+}
+
 .leftbox {
   width: 22vw;
   height: 22vw;

@@ -58,34 +58,36 @@ var getStim = function() {
 	var trial_type = trial_types.pop()
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 	var target_i = 0
-	var distractor_i = 0
 	if (trial_type[0] == 'S') {
 		target_i = probe_i
-		currData.correct_response = 77
+		if (trial_type[1] == 'T') {
+			currData.correct_response = 37
+		} else {
+			currData.correct_response = 40
+		}
 	} else {
 		target_i = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return y != probe_i}))
-		currData.correct_response = 90
+		if (trial_type[1] == 'T') {
+			currData.correct_response = 40
+		} else {
+			currData.correct_response = 37
+		}
 	}
-	if (trial_type[1] == 'S') {
-		distractor_i = target_i
-	} else if (trial_type[2] == 'S') {
-		distractor_i = probe_i
-	} else if (trial_type[2] == 'D') {
-		distractor_i = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return $.inArray(y, [target_i, probe_i]) == -1}))
+	var textprompt = ''
+	if (trial_type[1] == 'T') {
+		textprompt = '<div class = centerbox><p class="prompt truth">Do they match?</div>'
+	} else {
+		textprompt = '<div class = centerbox><p class="prompt lie">Do they match?</div>'
 	}
+	
 	currData.trial_num = current_trial
 	currData.condition = trial_type
 	currData.probe_id = probe_i
 	currData.target_id = target_i
-	var target = '<div class = leftbox>'+center_prefix+path+target_i+'_green.png'+postfix+'</div>'
+	var target = '<div class = leftbox>'+center_prefix+path+target_i+'_white.png'+postfix+'</div>'
 	var probe = '<div class = rightbox>'+center_prefix+path+probe_i+'_white.png'+postfix+'</div>'
-	var distractor = ''
-	if (distractor_i !== 0) {
-		distractor = '<div class = distractorbox>'+center_prefix+path+distractor_i+'_red.png'+postfix+'</div>'
-		currData.distractor_id = distractor_i
-	}
 	current_trial += 1
-	var stim = target  + probe + distractor
+	var stim = textprompt + target  + probe 
 	return stim
 }
 
@@ -107,31 +109,32 @@ var credit_var = 0
 
 // task specific variables
 // Set up variables for stimuli
-var colors = ['white','red','green']
+//var colors = ['white','red','green']
+var colors = ['white']
 var path = 'images/'
 var center_prefix = '<div class = centerimg><img src = "'
 var mask_prefix = '<div class = "centerimg mask"><img src = "'
-var postfix = '"</img></div>'
+var postfix = '"></div>'
 var shape_stim = []
 var exp_stage = 'practice'
 var currData = {'trial_id': 'stim'}
 var current_trial = 0
 
 for (var i = 1; i<11; i++) {
-	for (var c = 0; c<3; c++) {
+	for (var c = 0; c<1; c++) {
 		shape_stim.push(path + i + '_' + colors[c] + '.png')
 	}
 }
 jsPsych.pluginAPI.preloadImages(shape_stim.concat(path+'mask.png'))
 
-var practice_len = 21
+var practice_len = 8
 // Trial types denoted by three letters for the relationship between:
 // probe-target, target-distractor, distractor-probe of the form
 // SDS where "S" = match and "D" = non-match, N = "Neutral"
-var trial_types = jsPsych.randomization.repeat(['SSS', 'SDD', 'SNN', 'DSD', 'DDD', 'DDS', 'DNN'],practice_len/7)
-var exp_len = 280
-var numblocks = 4
-var choices = [90, 77]
+var trial_types = jsPsych.randomization.repeat(['ST', 'DT', 'SL','DL'],practice_len/4)
+var exp_len = 8
+var numblocks = 1
+var choices = [37,40]
 
 /* ************************************ */
 /* Set up jsPsych blocks */
@@ -153,6 +156,14 @@ var post_task_block = {
 var response_keys =
 	'<ul list-text><li><span class = "large" style = "color:red">WORD</span>: "R key"</li><li><span class = "large" style = "color:blue">WORD</span>: "B key"</li><li><span class = "large" style = "color:green">WORD</span>: "G key"</li></ul>'
 
+var audio = new Audio();
+audio.src = "error.mp3";
+audio.loop = false;
+
+function errorDing() {
+	audio.play();
+}
+
 
 var feedback_instruct_text =
 	'Welcome to the experiment. This experiment will take less than 20 minutes. Press <strong>enter</strong> to begin.'
@@ -173,7 +184,7 @@ var instructions_block = {
 		trial_id: "instruction"
 	},
 	pages: [
-		'<div class = centerbox><p class = block-text>In this experiment you will see a white shape on the right of the screen and a green shape on the left of the screen. Your task is to press the "M" key if they are the same shape and the "Z" key if they are different.</p><p class = block-text>On some trials a red shape will also be presented on the left. You should ignore the red shape - your task is only to respond based on whether the white and green shapes are the same.</p><p class = block-text>We will start with practice after you finish the instructions.</p></div>'
+		'<div class = centerbox><p class = block-text>In this experiment you will see white shapes on the right and left of the screen along with a prompt asking if the shapes match. When the prompt is in <b style="color: green">GREEN</b> text, your task is to press the <b>LEFT</b> arrow key if they are the same shape and the <b>DOWN</b> arrow key if they are different.</p><p class = block-text>On some trials the prompt text will be in <b style="color:red">RED</b>. This indicates that you should lie about whether the shapes match. So if the text is red and the shapes match you would press the <b>DOWN</b> arrow indicating that they do not match. If the text is red and the shapes do not match you would press the <b>LEFT</b> arrow indicating that they do match.</p><p class = block-text>We will start with practice after you finish the instructions.</p></div>'
 	],
 	allow_keys: false,
 	show_clickable_nav: true,
@@ -226,7 +237,7 @@ var start_test_block = {
 	on_finish: function() {
 		current_trial = 0
 		exp_stage = 'test'
-		trial_types = jsPsych.randomization.repeat(['SSS', 'SDD', 'SNN', 'DSD', 'DDD', 'DDS', 'DNN'],exp_len/7)
+		trial_types = jsPsych.randomization.repeat(['ST', 'DT','SL','DL'],exp_len/4)
 	}
 };
 
@@ -279,30 +290,43 @@ var practice_block = {
 	choices: choices,
 	key_answer: getResponse,
 	data: getData,
-	correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>',
-	incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
-	timeout_message: '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>',
+	//correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>',
+	//incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
+	//timeout_message: '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>',
+	correct_text: '<div class = centerbox><div style="color:green;font-size:60px"; class = center-text>Correct!</div></div>',
+	incorrect_text: '<div class = centerbox><div style="color:red;font-size:60px"; class = center-text>Incorrect</div></div><script type="text/javascript">errorDing()</script>',
+	timeout_message: '<div class = centerbox><div style="font-size:60px" class = center-text>Respond Faster!</div></div>',
+	response_ends_trial: true,
 	timing_response: 2000,
-	timing_feedback: 500,
-	show_stim_with_feedback: true,
+	timing_feedback_duration: 500,
+	show_stim_with_feedback: false,
 	timing_post_trial: 0,
-	prompt: '<div class = centerbox><p class = block-text>Press "M" key if the white and green shapes are the same. Otherwise press the "Z" key.</p></div>.'
+	//prompt: '<div class = centerbox><p class = block-text><br><br>Press the left arrow if the shapes are the same. Otherwise press the down arrow.</p></div>.'
+	prompt: ''
 }
 
 var decision_block = {
-	type: 'poldrack-single-stim',
+	type: 'poldrack-categorize',
 	stimulus: getStim,
 	is_html: true,
 	choices: choices,
+	key_answer: getResponse,
 	timing_response: 2000,
 	data: getData,
+	correct_text: '',
+	incorrect_text: '<script type="text/javascript">errorDing()</script>',
+	timeout_message: '<div class = centerbox><div class = center-text>Respond Faster!</div></div>',
+	only_timeout_feedback: true,
+	show_stim_with_feedback: false,
+	timing_feedback_duration: 500,
+	response_ends_trial: true,
 	timing_post_trial: 0,
 	on_finish: function(data) {
-		correct = false
-		if (data.key_press == data.correct_response) {
-			correct = true
-		}
-		jsPsych.data.addDataToLastTrial({'correct': correct})
+		//correct = false
+		//if (data.key_press == data.correct_response) {
+		//	correct = true
+		//}
+		//jsPsych.data.addDataToLastTrial({'correct': correct})
 	}
 }
 
