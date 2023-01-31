@@ -297,7 +297,7 @@ var practice_block = {
 	incorrect_text: '<div class = centerbox><div style="color:red;font-size:60px"; class = center-text>Incorrect</div></div><script type="text/javascript">errorDing()</script>',
 	timeout_message: '<div class = centerbox><div style="font-size:60px" class = center-text>Respond Faster!</div></div>',
 	response_ends_trial: true,
-	timing_response: 2000,
+	timing_response: 3000,
 	timing_feedback_duration: 500,
 	show_stim_with_feedback: false,
 	timing_post_trial: 0,
@@ -311,7 +311,7 @@ var decision_block = {
 	is_html: true,
 	choices: choices,
 	key_answer: getResponse,
-	timing_response: 2000,
+	timing_response: 3000,
 	data: getData,
 	correct_text: '',
 	incorrect_text: '<script type="text/javascript">errorDing()</script>',
@@ -336,14 +336,14 @@ shape_matching_experiment.push(instruction_node)
 for (var i = 0; i < practice_len; i ++) {
 	shape_matching_experiment.push(fixation_block)
 	shape_matching_experiment.push(practice_block)
-	shape_matching_experiment.push(mask_block)
+	//shape_matching_experiment.push(mask_block)
 }
 shape_matching_experiment.push(start_test_block)
 for (var b = 0; b < numblocks; b++) {
 	for (var i = 0; i < exp_len/numblocks; i ++) {
 		shape_matching_experiment.push(fixation_block)
 		shape_matching_experiment.push(decision_block)
-		shape_matching_experiment.push(mask_block)
+		//shape_matching_experiment.push(mask_block)
 	}
 	if (b < (numblocks-1)) {
 		shape_matching_experiment.push(rest_block)
