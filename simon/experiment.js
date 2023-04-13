@@ -175,9 +175,9 @@ function generate_stimuli(difficulty,type) {
 function create_trial(difficulty,type,practice) {
 	var [gridtext,side] = generate_stimuli(difficulty,type);
 	
-	var correct_response = 190;
+	var correct_response = 37;
 	if (type=="orange") {
-		correct_response = 188;
+		correct_response = 39;
 	}
 	
 	var correct_text = '<div class = centerbox><div style="color:green;font-size:60px"; class = block-text>Correct!</div></div>';
@@ -205,7 +205,7 @@ function create_trial(difficulty,type,practice) {
 				difficulty: difficulty,
 				type: type
 			},
-			choices: [',','<','.','>'],
+			choices: ['ArrowLeft','ArrowRight'],
 			key_answer: correct_response,
 			response_ends_trial: true,
 			correct_text: correct_text,
@@ -260,14 +260,7 @@ var [example_stim6,number] = generate_stimuli("congruent","orange");
 var b_task_instructions_1 = {
 	type: 'instructions',
 	pages: [
-		'<div class = centerbox><p class = block-text>If the circle is <b class="b">BLUE</b> press the <b>LEFT</b> arrow key. If the circle is <b class="o">ORANGE</b> then press the <b>RIGHT</b> arrow key.</p><p class=block-text>The following three example stimuli are <b class="b">BLUE</b>.</p></div>',
-		'<div class=centerbox>' + example_stim1 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim2 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim3 + '<br/><br/><br/><p class=center-block-text>Press Next to continue instructions.</p></div>',
-		'<div class = centerbox><p class = block-text>The following three stimuli are <b class="o">ORANGE</b>.</p></div>',
-		'<div class=centerbox>' + example_stim4 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim5 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim6 + '<br/><br/><br/><p class=center-block-text>Press Next to continue instructions.</p></div>',
+		'<div class = centerbox><p class = block-text>If the circle is <b class="b">BLUE</b> press the <b>LEFT</b> arrow key. If the circle is <b class="o">ORANGE</b> then press the <b>RIGHT</b> arrow key.</p>'
 	],
 	show_clickable_nav: true,
 	button_label_previous: 'Previous Page',
