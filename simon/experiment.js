@@ -81,7 +81,7 @@ var instructions_block = {
 		trial_id: "instruction"
 	},
 	pages: [
-		'<div class = centerbox><p class = block-text>In this task, you will be shown stimuli consisting of asterisks randomly arranged in a box. The box can hold up to 100 asterisks. Your job is to indicate whether there are more or less than 50 asterisks in the box.</p><p class = block-text>You will not have time to count the asterisks, so you will need to rely on your overall judgement of the box.</div>',
+		'<div class = centerbox><p class = block-text>In this task, you will be shown stimuli consisting of colored circles on the left or right of the screen. Your job is to press a button based on the color of the circle.</p></div>',
 	],
 	allow_keys: false,
 	show_clickable_nav: true,
@@ -260,20 +260,20 @@ var [example_stim6,number] = generate_stimuli("congruent","orange");
 var b_task_instructions_1 = {
 	type: 'instructions',
 	pages: [
-		'<div class = centerbox><p class = block-text>If there are <b>MORE</b> than 50 asterisks in the box, you should press the <b>> KEY</b>. If there are <b>LESS</b> than 50 asterisks, you should press the <b>< KEY</b>.</p><p class=block-text>The following three example stimuli have <b>LESS</b> than 50 asterisks.</p></div>',
-		'<div class=centerbox>' + example_stim1 + '<p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim2 + '<p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim3 + '<p class=center-block-text>Press Next to continue instructions.</p></div>',
-		'<div class = centerbox><p class = block-text>The following three stimuli have <b>MORE</b> than 50 asterisks.</p></div>',
-		'<div class=centerbox>' + example_stim4 + '<p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim5 + '<p class=center-block-text>Press Next to see the next example.</p></div>',
-		'<div class=centerbox>' + example_stim6 + '<p class=center-block-text>Press Next to continue instructions.</p></div>',
+		'<div class = centerbox><p class = block-text>If the circle is <b class="b">BLUE</b> press the <b>LEFT</b> arrow key. If the circle is <b class="o">ORANGE</b> then press the <b>RIGHT</b> arrow key.</p><p class=block-text>The following three example stimuli are <b class="b">BLUE</b>.</p></div>',
+		'<div class=centerbox>' + example_stim1 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
+		'<div class=centerbox>' + example_stim2 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
+		'<div class=centerbox>' + example_stim3 + '<br/><br/><br/><p class=center-block-text>Press Next to continue instructions.</p></div>',
+		'<div class = centerbox><p class = block-text>The following three stimuli are <b class="o">ORANGE</b>.</p></div>',
+		'<div class=centerbox>' + example_stim4 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
+		'<div class=centerbox>' + example_stim5 + '<br/><br/><br/><p class=center-block-text>Press Next to see the next example.</p></div>',
+		'<div class=centerbox>' + example_stim6 + '<br/><br/><br/><p class=center-block-text>Press Next to continue instructions.</p></div>',
 	],
 	show_clickable_nav: true,
 	button_label_previous: 'Previous Page',
 	button_label_next: 'Next Page',
 	data: {
-		trial_id: "numerosity task instructions 1"
+		trial_id: "simon task instructions 1"
 	},
 	timing_post_trial: 1000,
 	key_forward: jsPsych.NO_KEYS,
@@ -283,11 +283,11 @@ var b_task_instructions_1 = {
 var b_task_instructions_2 = {
 	type: 'instructions',
 	pages: [
-		'<div class = centerbox ><p class = block-text>When presented with the stimulus, you should press the <b>greater than key [>]</b> for <b>MORE</b> than 50 or the <b>less than key [<]</b> for <b>LESS</b> than 50 asterisks. Many of these stimuli can be difficult to categorize, so everyone will make some incorrect choices. If you are not sure which category to choose, just take your best guess. Try to make your responses quickly. If you respond too slowly, you will receive a feedback message that says "Respond faster!".</p><p class=block-text>The following round contains 20 practice trials.</p><p class=center-block-text>Press <b>ENTER</b> to begin practice.</div>'
+		'<div class = centerbox ><p class = block-text>When presented with the stimulus, you should press the <b>LEFT</b> arrow key for <b class="b">BLUE</b> or the <b>RIGHT</b> arrow key for <b class="o">ORANGE</b>. Try to make your responses quickly. If you respond too slowly, you will receive a feedback message that says "Respond faster!".</p><p class=block-text>The following round contains 20 practice trials.</p><p class=center-block-text>Press <b>ENTER</b> to begin practice.</div>'
 	],
 	key_forward: 'Enter',
 	data: {
-		trial_id: "numerosity task instructions 2"
+		trial_id: "simon task instructions 2"
 	},
 	timing_post_trial:1000
 };
@@ -295,11 +295,11 @@ var b_task_instructions_2 = {
 var b_task_instructions_4 = {
 	type: 'instructions',
 	pages: [
-		'<div class = centerbox><p class = block-text>The next round contains more trials in which you will have to determine whether each stimulus has <b>MORE</b> or <b>LESS</b> than 50 asterisks. Unlike the practice block you just completed, you will not receive any feedback if your choice is correct. If your choice is incorrect or you do not respond quickly enough you will see feedback. Remember that this task is designed to be difficult and that everyone makes some incorrect choices. Try your best to respond quickly and accurately on each trial, and if you are unsure, take your best guess.</p><p class=center-block-text>Press <b>ENTER</b> to begin task.</p></div>'
+		'<div class = centerbox><p class = block-text>The next round contains more trials in which you will have to press a key based on the color of the circle. Unlike the practice block you just completed, you will not receive any feedback if your choice is correct. If your choice is incorrect or you do not respond quickly enough you will see feedback. Try your best to respond quickly and accurately on each trial.</p><p class=center-block-text>Press <b>ENTER</b> to begin task.</p></div>'
 	],
 	key_forward: 'Enter',	
 	data: {
-		trial_id: "numerosity task instructions 4"
+		trial_id: "simon task instructions 4"
 	},
 	timing_post_trial: 1000
 };
@@ -370,7 +370,7 @@ var end_block = {
 	type: 'html-keyboard-response',
 	data: {
 		trial_id: "end",
-		exp_id: 'numerosity'
+		exp_id: 'simon'
 	},
 	stimulus: '<div class=centerbox><p class=block-text>You have finished the task. </p><p class=block-text>Please wait and you will be redirected to complete the survey.</p></div>',
 	choices: jsPsych.NO_KEYS,

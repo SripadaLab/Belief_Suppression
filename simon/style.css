@@ -1,39 +1,3 @@
-
-
-.F {
-	color: #00FF00;
-}
-
-.O {
-	color: #0000FF;
-}
-
-.B {
-	color: #FF0000;
-}
-
-.mask {
-	display: grid;
-	width: 200px;
-	grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-	grid-template-rows: 10p% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-	grid-gap: 0px;
-	margin:5px 5px 5px 5px;
-	border: 1px solid white;
-}
-
-
-.w {
-	width: 20px;
-	height: 20px;
-	background-color: black;
-}
-.b {
-	width: 20px;
-	height: 20px;
-	background-color: black;
-}
-
 .div-center {
 	margin: 0 auto;
 	position: relative;
@@ -52,6 +16,14 @@
 
 .blue {
 	background-color: #00AAFF
+}
+
+.o {
+	color: #FFAA00;
+}
+
+.b {
+	color: #00AAFF
 }
 
 .left {
