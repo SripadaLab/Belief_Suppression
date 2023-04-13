@@ -175,9 +175,9 @@ function generate_stimuli(difficulty,type) {
 function create_trial(difficulty,type,practice) {
 	var [gridtext,side] = generate_stimuli(difficulty,type);
 	
-	var correct_response = 37;
+	var correct_response = 'ArrowLeft';
 	if (type=="orange") {
-		correct_response = 39;
+		correct_response = 'ArrowRight';
 	}
 	
 	var correct_text = '<div class = centerbox><div style="color:green;font-size:60px"; class = block-text>Correct!</div></div>';
