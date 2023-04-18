@@ -207,7 +207,7 @@ var fullscreen = {
 	type: 'fullscreen',
 	fullscreen_mode: true
 };
-//experiment_timeline.push(fullscreen);
+experiment_timeline.push(fullscreen);
 
 function create_trial(practice) {
 	
