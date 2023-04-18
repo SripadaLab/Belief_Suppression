@@ -211,8 +211,8 @@ var fullscreen = {
 
 function create_trial(practice) {
 	
-	var correct_text = '<div class = centerbox><div style="color:green;font-size:60px"; class = block-text>Correct!</div></div>';
-	var incorrect_text = '<div class = centerbox><div style="color:red;font-size:60px"; class = block-text>Incorrect</div></div>';
+	var correct_text = '<div class = centerbox><div style="color:white;font-size:60px"; class = block-text>Correct!</div></div>';
+	var incorrect_text = '<div class = centerbox><div style="color:white;font-size:60px"; class = block-text>Incorrect</div></div>';
 	var feedback_duration = 1000;
 	var fixation_duration = 500;
 	var trial_id = "practice";
@@ -281,7 +281,7 @@ var start_test_block = {
 		trial_id: "instruction"
 	},
 	timing_response: 180000,
-	stimulus: '<div class = centerbox><p class = center-block-text>We will now start the test. The task will be the same as the practice you just completed, except that you will not see feedback if you are correct, feedback will only be given if you are incorrect or do not respond quickly enough. </p><p class = center-block-text>Press <strong>enter</strong> to begin the test.</p></div>',
+	stimulus: '<div class = centerbox><p class = block-text>We will now start the test. The task will be the same as the practice you just completed, except that you will not see feedback if you are correct, feedback will only be given if you are incorrect or do not respond quickly enough. </p><p class = center-block-text>Press <strong>enter</strong> to begin the test.</p></div>',
 	choices: ['Enter'],
 	key_answer: 13,
 	timing_post_trial: 1000
