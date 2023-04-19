@@ -39,12 +39,18 @@ $( document ).ready(function() {
 		study_id: study_id,
 		session_id: session_id,
 		browser: browser,
-		resolution: resolution
+		resolution: resolution,
+		exp_id: 'shape matching'
 	});
 	
     jsPsych.init({
              timeline: experiment_timeline,
 			 on_finish: function() {
+			 
+			if (!pav) {
+				jsPsych.data.get().localSave('csv','shape_matching_results.csv');
+			};
+
 			 window.location = "https://umich.qualtrics.com/jfe/form/SV_3Rk69Ze8m5NgiLI?PROLIFIC_PID=" + subject_id + "&STUDY_ID=" + study_id + "&SESSION_ID=" + session_id;
 			 }
       });

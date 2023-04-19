@@ -1,162 +1,136 @@
 /* ************************************ */
 /* Define helper functions */
 /* ************************************ */
-function assessPerformance() {
-	var experiment_data = jsPsych.data.getTrialsOfType('poldrack-single-stim')
-	experiment_data = experiment_data.concat(jsPsych.data.getTrialsOfType('poldrack-categorize'))
-	var missed_count = 0
-	var trial_count = 0
-	var rt_array = []
-	var rt = 0
-		//record choices participants made
-	var choice_counts = {}
-	choice_counts[-1] = 0
-	for (var k = 0; k < choices.length; k++) {
-		choice_counts[choices[k]] = 0
-	}
-	for (var i = 0; i < experiment_data.length; i++) {
-		if (experiment_data[i].possible_responses != 'none') {
-			trial_count += 1
-			rt = experiment_data[i].rt
-			key = experiment_data[i].key_press
-			choice_counts[key] += 1
-			if (rt == -1) {
-				missed_count += 1
-			} else {
-				rt_array.push(rt)
-			}
-		}
-	}
-	//calculate average rt
-	var avg_rt = -1
-	if (rt_array.length !== 0) {
-		avg_rt = math.median(rt_array)
-	} 
-	//calculate whether response distribution is okay
-	var responses_ok = true
-	Object.keys(choice_counts).forEach(function(key, index) {
-		if (choice_counts[key] > trial_count * 0.85) {
-			responses_ok = false
-		}
-	})
-	var missed_percent = missed_count/trial_count
-	credit_var = (missed_percent < 0.4 && avg_rt > 200 && responses_ok)
-	jsPsych.data.addDataToLastTrial({"credit_var": credit_var})
-}
+
+var pav = false;
 
 var getInstructFeedback = function() {
 	return '<div class = centerbox><p class = center-block-text>' + feedback_instruct_text +
-		'</p></div>'
+		'</p></div>';
 }
 
 var randomDraw = function(lst) {
-  var index = Math.floor(Math.random() * (lst.length))
-  return lst[index]
+  var index = Math.floor(Math.random() * (lst.length));
+  return lst[index];
 }
 
 var getMathFact = function(t) {
-	var x = 0
-	var y = 0
-	var z = 0
-	
-	x = randomDraw([1,2,3,4,5,6,7,8,9,10])
-	y = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return y != x}))
+	var x = 0;
+	var y = 0;
+	var z = 0;
+	//adjusted to be 10 or less total
+	x = randomDraw([1,2,3,4,5,6,7,8,9]);
+	y = randomDraw([1,2,3,4,5,6,7,8,9].filter(function(y) {return (y != x) & (y+x<=10)}));
 	if (t==1) {
 		//true math fact 
-		z = x + y
+		z = x + y;
 	} else {
 		//false math fact, randomly jitter x and y by 
-		var jx = randomDraw([-1,0,1])
-		var jy = randomDraw([-1,0,1].filter(function(y) { return y != -1*jx}))
-		z = x+jx+y+jy		
+		z = 11;
+		while (z>10) {
+			var jx = randomDraw([-1,0,1]);
+			var jy = randomDraw([-1,0,1].filter(function(y) { return y != -1*jx}));
+			z = x+jx+y+jy;
+		}
 	}
-	return [x,y,z]
+	return [x,y,z];
 }
 
 var getStim = function() {
-	var trial_type = trial_types.pop()
-	var math
+	currData = {'trial_id':'stim','exp_stage':exp_stage};
+	//currData.exp_stage = exp_stage;
+	
+	var trial_type = trial_types.pop();
+	var math;
 	if (trial_type[0] == 'S') {
 		//generate a random true math fact
-		math = getMathFact(1)
+		math = getMathFact(1);
 		if (trial_type[1] == 'T') {
-			currData.correct_response = 37
+			currData.correct_response = 't';
 		} else {
-			currData.correct_response = 40
+			currData.correct_response = 'f';
 		}
 	} else {
 		//generate a random false math fact
-		math = getMathFact(0)
+		math = getMathFact(0);
 		//target_i = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return y != probe_i}))
 		if (trial_type[1] == 'T') {
-			currData.correct_response = 40
+			currData.correct_response = 'f';
 		} else {
-			currData.correct_response = 37
+			currData.correct_response = 't';
 		}
 	}
-	var textprompt = ''
+	var textprompt = '';
+	var truthclass = 'truth';
+	var lieclass = 'lie';
+	if (currData.exp_stage === "practice1") {
+		truthclass = "";
+		lieclass = "";
+	}
 	if (trial_type[1] == 'T') {
-		textprompt = '<div class = centerbox><p class="prompt truth">Is it correct?</div>'
+		textprompt = '<div class = centerbox><p class="prompt ' + truthclass + '">Is it correct?</div>';
 	} else {
-		textprompt = '<div class = centerbox><p class="prompt lie">Is it correct?</div>'
+		textprompt = '<div class = centerbox><p class="prompt ' + lieclass + '">Is it correct?</div>';
 	}
 	
-	currData.trial_num = current_trial
-	currData.condition = trial_type
+	currData.trial_num = current_trial+1;
+	currData.condition = trial_type;
 	//currData.probe_id = probe_i
 	//currData.target_id = target_i
-	var target = '<div class = leftbox>' + math[0] + ' + ' + '</div>'
-	var probe = '<div class = centerbox2>' + math[1] + ' = ' + '</div>'
-	var problem = '<div class = rightbox>' + math[2] + '</div>'
-	current_trial += 1
-	var stim = textprompt + '<div class=bigtext>' + target + probe + problem + '</div>'
-	return stim
+	var target = '<div class = "bigtext g1">' + math[0] + ' + ' + '</div>';
+	var probe = '<div class = "bigtext g2">' + math[1] + ' = ' + '</div>';
+	var problem = '<div class = "bigtext g3">' + math[2] + '</div>';
+	current_trial += 1;
+	//var stim = textprompt + '<div class=bigtext>' + target + probe + problem + '</div>';
+	var stim = textprompt + '<div class=container>' + target  + probe + problem + '</div>';
+	return [stim, currData];
 }
 
-var getData = function() {
-	currData.exp_stage = exp_stage
-	return currData
-}
+//var getData = function() {
+//	currData.exp_stage = exp_stage;
+//	return structuredClone(currData);
+//}
 
-var getResponse = function() {
-	return currData.correct_response
-}
+//var getResponse = function() {
+//	return currData.correct_response;
+//}
+
 /* ************************************ */
 /* Define experimental variables */
 /* ************************************ */
 // generic task variables
-var sumInstructTime = 0 //ms
-var instructTimeThresh = 0 ///in seconds
-var credit_var = 0
+var sumInstructTime = 0; //ms
+var instructTimeThresh = 0; ///in seconds
+var credit_var = 0;
 
 // task specific variables
 // Set up variables for stimuli
 //var colors = ['white','red','green']
-var colors = ['white']
-var path = 'images/'
-var center_prefix = '<div class = centerimg><img src = "'
-var mask_prefix = '<div class = "centerimg mask"><img src = "'
-var postfix = '"></div>'
-var shape_stim = []
-var exp_stage = 'practice'
-var currData = {'trial_id': 'stim'}
-var current_trial = 0
+var colors = ['white'];
+var path = 'images/';
+var center_prefix = '<div class = centerimg><img src = "';
+var mask_prefix = '<div class = "centerimg mask"><img src = "';
+var postfix = '"></div>';
+var shape_stim = [];
+var exp_stage = 'practice1';
+//var currData = {'trial_id': 'stim'};
+var current_trial = 0;
 
 for (var i = 1; i<11; i++) {
 	for (var c = 0; c<1; c++) {
-		shape_stim.push(path + i + '_' + colors[c] + '.png')
+		shape_stim.push(path + i + '_' + colors[c] + '.png');
 	}
 }
-jsPsych.pluginAPI.preloadImages(shape_stim.concat(path+'mask.png'))
+jsPsych.pluginAPI.preloadImages(shape_stim.concat(path+'mask.png'));
 
 var practice_len = 8
 // Trial types denoted by three letters for the relationship between:
 // probe-target, target-distractor, distractor-probe of the form
 // SDS where "S" = match and "D" = non-match, N = "Neutral"
-var trial_types = jsPsych.randomization.repeat(['ST', 'DT', 'SL','DL'],practice_len/4)
-var exp_len = 8
-var numblocks = 1
-var choices = [37,40]
+var trial_types = jsPsych.randomization.repeat(['ST', 'DT', 'SL','DL'],practice_len/4);
+var exp_len = 8;
+var numblocks = 1;
+var choices = ['t','f'];
 
 /* ************************************ */
 /* Set up jsPsych blocks */
@@ -168,15 +142,16 @@ var post_task_block = {
    data: {
        trial_id: "post task questions"
    },
-   questions: ['<p class = center-block-text style = "font-size: 20px">Please summarize what you were asked to do in this task.</p>',
-              '<p class = center-block-text style = "font-size: 20px">Do you have any comments about this task?</p>'],
-   rows: [15, 15],
-   columns: [60,60]
+   questions: [
+   { 
+	prompt: '<p class = center-block-text style = "font-size: 20px">Please summarize what you were asked to do in this task.</p>',
+	rows: 3,
+	colums: 30
+   }
+   ]
 };
 
 /* define static blocks */
-var response_keys =
-	'<ul list-text><li><span class = "large" style = "color:red">WORD</span>: "R key"</li><li><span class = "large" style = "color:blue">WORD</span>: "B key"</li><li><span class = "large" style = "color:green">WORD</span>: "G key"</li></ul>'
 
 var audio = new Audio();
 audio.src = "error.mp3";
@@ -186,190 +161,245 @@ function errorDing() {
 	audio.play();
 }
 
-
 var feedback_instruct_text =
-	'Welcome to the experiment. This experiment will take less than 20 minutes. Press <strong>enter</strong> to begin.'
+	'<div class="block-text">Welcome to the experiment. Press <strong>enter</strong> to begin.</div>'
+	
+
 var feedback_instruct_block = {
-	type: 'poldrack-text',
+	type: 'instructions',
 	data: {
 		trial_id: "instruction"
 	},
-	cont_key: [13],
-	text: getInstructFeedback,
+	key_forward: 'Enter',	pages: [getInstructFeedback()],
 	timing_post_trial: 0,
-	timing_response: 180000
 };
+
 /// This ensures that the subject does not read through the instructions too quickly.  If they do it too quickly, then we will go over the loop again.
 var instructions_block = {
-	type: 'poldrack-instructions',
+	type: 'instructions',
 	data: {
 		trial_id: "instruction"
 	},
 	pages: [
-		'<div class = centerbox><p class = block-text>In this experiment you will see simple math problems on the screen along with a prompt asking if the problem is correct. When the prompt is in <b style="color: green">GREEN</b> text, your task is to press the <b>LEFT</b> arrow key if the math problem is correct and the <b>DOWN</b> arrow key if the problem is incorrect.</p><p class = block-text>On some trials the prompt text will be in <b style="color:red">RED</b>. This indicates that you should lie about whether the problem is correct. So if the text is red and the problem is correct you would press the <b>DOWN</b> arrow indicating that it is incorrect. If the text is red and the problem is not correct you would press the <b>LEFT</b> arrow indicating that it is correct.</p><p class = block-text>We will start with practice after you finish the instructions.</p></div>'
+		'<div class = centerbox><p class = block-text>In this experiment you will see simple math problems on the screen along with a prompt asking if the problem is correct. </p><p class = block-text>If the math problem is correct, press the <b>T</b> key. If it is not correct, press the <b>F</b> key.</p><p class = block-text>Press <b>Enter</b> to start a short practice.</p></div>'
 	],
-	allow_keys: false,
-	show_clickable_nav: true,
-	timing_post_trial: 1000
+	allow_keys: true,
+	show_clickable_nav: false,
+	timing_post_trial: 1000,
+	key_forward: 'Enter',
+	key_backward: jsPsych.NO_KEYS
 };
 
 var instruction_node = {
 	timeline: [feedback_instruct_block, instructions_block],
 	/* This function defines stopping criteria */
 	loop_function: function(data) {
-		for (i = 0; i < data.length; i++) {
-			if ((data[i].trial_type == 'poldrack-instructions') && (data[i].rt != -1)) {
-				rt = data[i].rt
+		for (i = 0; i < data.values().length; i++) {
+			if ((data.values()[i].trial_type == 'instructions') && (data.values()[i].rt != -1)) {
+				rt = data.values()[i].rt
 				sumInstructTime = sumInstructTime + rt
 			}
 		}
 		if (sumInstructTime <= instructTimeThresh * 1000) {
 			feedback_instruct_text =
-				'Read through instructions too quickly.  Please take your time and make sure you understand the instructions.  Press <strong>enter</strong> to continue.'
+				'<div class="block-text">Read through instructions too quickly.  Please take your time and make sure you understand the instructions.  Press <strong>enter</strong> to continue.</div>'
 			return true
 		} else if (sumInstructTime > instructTimeThresh * 1000) {
-			feedback_instruct_text = 'Done with instructions. Press <strong>enter</strong> to continue.'
+			feedback_instruct_text = '<div class="block-text">Done with instructions. Press <strong>enter</strong> to continue.</div>'
 			return false
 		}
 	}
 }
 
-var end_block = {
-	type: 'poldrack-text',
-	data: {
-		trial_id: "end",
-    	exp_id: 'shape_matching'
-	},
-	timing_response: 180000,
-	text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <strong>enter</strong> to continue.</p></div>',
-	cont_key: [13],
-	timing_post_trial: 0,
-	on_finish: assessPerformance
+var cursor_off = {
+	type: 'call-function',
+	func: function() {
+		document.body.style.cursor = "none";
+	}
+}
+var cursor_on = {
+	type: 'call-function',
+	func: function() {
+		document.body.style.cursor = "auto";
+	}
+}
+
+var experiment_timeline = []
+
+if (pav) {
+	var pavlovia_init = {
+		type: "pavlovia",
+		command: "init"
+	};
+	experiment_timeline.push(pavlovia_init);
 };
+
+var fullscreen = {
+	type: 'fullscreen',
+	fullscreen_mode: true
+};
+experiment_timeline.push(fullscreen);
+
+
+function create_trial(practice) {
+	
+	var correct_text = '<div class = centerbox><div style="color:white;font-size:60px"; class = block-text>Correct!</div></div>';
+	var incorrect_text = '<div class = centerbox><div style="color:white;font-size:60px"; class = block-text>Incorrect</div></div>';
+	var feedback_duration = 1000;
+	var fixation_duration = 500;
+	var trial_id = "practice";
+	if (practice==0) {
+		trial_id = "math";
+		correct_text = '';
+		//incorrect_text = '';
+		feedback_duration = 300;
+		fixation_duration = 200;
+	}
+	
+	var stim;
+	var currData;
+	var tmp = getStim();
+	stim = tmp[0];
+	currData = tmp[1];
+	
+	var stim_block = {
+			type: 'poldrack-categorize',
+			is_html: true,
+			data: currData,
+			stimulus: stim,
+			choices: ['t','f'],
+			key_answer: currData.correct_response,
+			response_ends_trial: true,
+			correct_text: correct_text,
+			incorrect_text: incorrect_text,
+			timeout_message: '<div class = centerbox><div style="font-size:60px" class = block-text>Respond Faster!</div></div>',
+			timing_feedback_duration: feedback_duration,
+			show_stim_with_feedback: false,
+			timing_stim: 3000,
+			timing_response: 3000,
+			timing_post_trial: 0
+	};
+	
+	var fixation_block = {
+			type: 'html-keyboard-response',
+			stimulus: '<div class=centerbox><div style="font-size:60px;" class="block-text">+</div></div>',
+			choices: jsPsych.NO_KEYS,
+			data: {
+				trial_id: "fixation"
+			},
+			stimulus_duration: fixation_duration,
+			trial_duration: fixation_duration
+	};
+	
+	var trial = [];
+	trial.push(stim_block);
+	trial.push(fixation_block);
+	return trial;
+}
+
+var instructions_block_2 = {
+	type: 'instructions',
+	data: {
+		trial_id: "instruction"
+	},
+	pages: [
+		'<div class = centerbox><p class = block-text>Now there will be one more instruction. When the prompt is in <b style="color: green">GREEN</b> text, your task is to press the <b>T</b> key if the math problem is correct and the <b>F</b> key if it is incorrect like you just did.</p><p class = block-text>But on some trials the prompt text will be in <b style="color:red">RED</b>. This indicates that you should lie about whether the math problem is correct. So if the text is red and the math problem is correct you would press the <b>F</b> key indicating that it is incorrect. If the text is red and the math problem is not correct you would press the <b>T</b> key indicating that it is correct.</p><p class = block-text>Press <b>Enter</b> to start a short practice.</p></div>'
+	],
+	allow_keys: true,
+	show_clickable_nav: false,
+	timing_post_trial: 1000,
+	key_forward: 'Enter',
+	key_backward: jsPsych.NO_KEYS
+};
+
 
 var start_test_block = {
-	type: 'poldrack-text',
+	type: 'html-keyboard-response',
 	data: {
 		trial_id: "instruction"
 	},
 	timing_response: 180000,
-	text: '<div class = centerbox><p class = center-block-text>We will now start the test. Respond exactly like you did during practice. There will be three short breaks throughout the test.</p><p class = center-block-text>Press <strong>enter</strong> to begin the test.</p></div>',
-	cont_key: [13],
-	timing_post_trial: 1000,
-	on_finish: function() {
-		current_trial = 0
-		exp_stage = 'test'
-		trial_types = jsPsych.randomization.repeat(['ST', 'DT','SL','DL'],exp_len/4)
-	}
-};
-
-var rest_block = {
-	type: 'poldrack-text',
-	data: {
-		trial_id: "instruction"
-	},
-	timing_response: 180000,
-	text: '<div class = centerbox><p class = center-block-text>Take a short break!</p><p class = center-block-text>Press <strong>enter</strong> to continue the test.</p></div>',
-	cont_key: [13],
+	stimulus: '<div class = centerbox><p class = block-text>We will now start the test. The task will be the same as the practice you just completed, except that you will not see feedback if you are correct, feedback will only be given if you are incorrect or do not respond quickly enough. </p><p class = center-block-text>Press <strong>enter</strong> to begin the test.</p></div>',
+	choices: ['Enter'],
+	key_answer: 13,
 	timing_post_trial: 1000
 };
 
-var fixation_block = {
-	type: 'poldrack-single-stim',
-	stimulus: '<div class = centerbox><div class = fixation>+</div></div>',
-	is_html: true,
-	choices: 'none',
-	data: {
-		trial_id: "fixation"
-	},
-	timing_response: 500,
-	timing_post_trial: 0,
-	on_finish: function() {
-		jsPsych.data.addDataToLastTrial({'exp_stage': exp_stage})
-	},
-}
 
-var mask_block = {
-	type: 'poldrack-single-stim',
-	stimulus: '<div class = "leftbox">'+mask_prefix+path+'mask.png'+postfix+'</div>' +
-		'<div class = "rightbox">'+mask_prefix+path+'mask.png'+postfix+'</div>',
-	is_html: true,
-	choices: 'none',
-	data: {
-		trial_id: "mask"
-	},
-	timing_response: 400,
-	timing_post_trial: 500,
-	on_finish: function() {
-		jsPsych.data.addDataToLastTrial({'exp_stage': exp_stage})
-	},
-}
-
-var practice_block = {
-	type: 'poldrack-categorize',
-	stimulus: getStim,
-	is_html: true,
-	choices: choices,
-	key_answer: getResponse,
-	data: getData,
-	//correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>',
-	//incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
-	//timeout_message: '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>',
-	correct_text: '<div class = centerbox><div style="color:green;font-size:60px"; class = center-text>Correct!</div></div>',
-	incorrect_text: '<div class = centerbox><div style="color:red;font-size:60px"; class = center-text>Incorrect</div></div><script type="text/javascript">errorDing()</script>',
-	timeout_message: '<div class = centerbox><div style="font-size:60px" class = center-text>Respond Faster!</div></div>',
-	response_ends_trial: true,
-	timing_response: 3000,
-	timing_feedback_duration: 500,
-	show_stim_with_feedback: false,
-	timing_post_trial: 0,
-	//prompt: '<div class = centerbox><p class = block-text><br><br>Press the left arrow if the shapes are the same. Otherwise press the down arrow.</p></div>.'
-	prompt: ''
-}
-
-var decision_block = {
-	type: 'poldrack-categorize',
-	stimulus: getStim,
-	is_html: true,
-	choices: choices,
-	key_answer: getResponse,
-	timing_response: 3000,
-	data: getData,
-	correct_text: '',
-	incorrect_text: '<script type="text/javascript">errorDing()</script>',
-	timeout_message: '<div class = centerbox><div class = center-text>Respond Faster!</div></div>',
-	only_timeout_feedback: true,
-	show_stim_with_feedback: false,
-	timing_feedback_duration: 500,
-	response_ends_trial: true,
-	timing_post_trial: 0,
-	on_finish: function(data) {
-		//correct = false
-		//if (data.key_press == data.correct_response) {
-		//	correct = true
-		//}
-		//jsPsych.data.addDataToLastTrial({'correct': correct})
-	}
-}
-
-/* create experiment definition array */
-shape_matching_experiment = []
-shape_matching_experiment.push(instruction_node)
+experiment_timeline.push(instruction_node);
+experiment_timeline.push(cursor_off);
+//practice with no color cues
+current_trial = 0;
+trial_types = jsPsych.randomization.repeat(['ST', 'DT'],practice_len/2);
 for (var i = 0; i < practice_len; i ++) {
-	shape_matching_experiment.push(fixation_block)
-	shape_matching_experiment.push(practice_block)
-	//shape_matching_experiment.push(mask_block)
+	experiment_timeline = experiment_timeline.concat(create_trial(1))
 }
-shape_matching_experiment.push(start_test_block)
+experiment_timeline.push(cursor_on);
+//instructions about lying task
+experiment_timeline.push(instructions_block_2);
+experiment_timeline.push(cursor_off);
+//practice with color cues
+exp_stage = 'practice2'
+current_trial = 0;
+trial_types = jsPsych.randomization.repeat(['ST', 'DT','SL','DL'],practice_len/4);
+for (var i = 0; i < practice_len; i ++) {
+	experiment_timeline = experiment_timeline.concat(create_trial(1))
+}
+experiment_timeline.push(cursor_on);
+//start task screen
+experiment_timeline.push(start_test_block);
+experiment_timeline.push(cursor_off);
+//task
+current_trial = 0;
+exp_stage = 'test';
+trial_types = jsPsych.randomization.repeat(['ST', 'DT','SL','DL'],exp_len/4);
+
 for (var b = 0; b < numblocks; b++) {
 	for (var i = 0; i < exp_len/numblocks; i ++) {
-		shape_matching_experiment.push(fixation_block)
-		shape_matching_experiment.push(decision_block)
-		//shape_matching_experiment.push(mask_block)
+		experiment_timeline = experiment_timeline.concat(create_trial(0))
 	}
 	if (b < (numblocks-1)) {
-		shape_matching_experiment.push(rest_block)
+		experiment_timeline.push(rest_block)
 	}
 }
-shape_matching_experiment.push(post_task_block)
-shape_matching_experiment.push(end_block)
+
+experiment_timeline.push(cursor_on);
+
+experiment_timeline.push(post_task_block)
+
+if (pav) {
+	var pavlovia_finish = {
+		type: "pavlovia",
+		command: "finish",
+	};
+	experiment_timeline.push(pavlovia_finish);
+};
+
+var pause = {
+	type: 'html-keyboard-response',
+	stimulus: '<div class=centerbox><p class=center-block-text>Please wait...</p></div>',
+	choices: jsPsych.NO_KEYS,
+	trial_duration: 6000
+};
+experiment_timeline.push(pause);
+
+var no_fullscreen = {
+	type: "fullscreen",
+	fullscreen_mode: false
+};
+
+experiment_timeline.push(no_fullscreen);
+
+
+var end_block = {
+	type: 'html-keyboard-response',
+	data: {
+		trial_id: "end",
+		exp_id: 'numerosity'
+	},
+	stimulus: '<div class=centerbox><p class=block-text>You have finished the task. </p><p class=block-text>Please wait and you will be redirected to complete the survey.</p></div>',
+	choices: jsPsych.NO_KEYS,
+	trial_duration: 4000
+};
+
+experiment_timeline.push(end_block)

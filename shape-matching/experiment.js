@@ -15,6 +15,8 @@ var getInstructFeedback = function() {
 }
 
 var getStim = function() {
+	currData = {'trial_id':'stim','exp_stage':exp_stage};
+	
 	var trial_type = trial_types.pop();
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10]);
 	var target_i = 0;
@@ -46,7 +48,7 @@ var getStim = function() {
 		textprompt = '<div class = centerbox><p class="prompt ' + lieclass + '">Do they match?</div>';
 	}
 	
-	currData.trial_num = current_trial;
+	currData.trial_num = current_trial+1;
 	currData.condition = trial_type;
 	currData.probe_id = probe_i;
 	currData.target_id = target_i;
@@ -54,17 +56,17 @@ var getStim = function() {
 	var probe = '<div class = g3>'+center_prefix+path+probe_i+'_white.png'+postfix+'</div>';
 	current_trial += 1;
 	var stim = textprompt + '<div class=container>' + target  + '<div class=g2></div>' +  probe + '</div>';
-	return stim;
+	return [stim, currData];
 }
 
-var getData = function() {
-	currData.exp_stage = exp_stage;
-	return currData;
-}
+//var getData = function() {
+//	currData.exp_stage = exp_stage;
+//	return currData;
+//}
 
-var getResponse = function() {
-	return currData.correct_response;
-}
+//var getResponse = function() {
+//	return currData.correct_response;
+//}
 /* ************************************ */
 /* Define experimental variables */
 /* ************************************ */
@@ -224,13 +226,19 @@ function create_trial(practice) {
 		fixation_duration = 200;
 	}
 	
+	var stim;
+	var currData;
+	var tmp = getStim();
+	stim = tmp[0];
+	currData = tmp[1];
+	
 	var stim_block = {
 			type: 'poldrack-categorize',
 			is_html: true,
-			data: getData(),
-			stimulus: getStim(),
+			data: currData,
+			stimulus: stim,
 			choices: ['t','f'],
-			key_answer: getResponse(),
+			key_answer: currData.correct_response,
 			response_ends_trial: true,
 			correct_text: correct_text,
 			incorrect_text: incorrect_text,
