@@ -1,0 +1,61 @@
+<!DOCTYPE html><html class=''>
+<head>
+    <meta charset='UTF-8'>
+    <meta name="robots" content="noindex">
+    <title>Lexical Task</title>
+    
+	<link rel='stylesheet' type='text/css' href='jspsych.css'>
+	<link rel='stylesheet' type='text/css' href='default_style.css'>
+	<link rel='stylesheet' type='text/css' href='style.css'>
+</head>
+
+<body>
+<script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+<script type="text/javascript" src="js/math.min.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/jspsych.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-categorize-html.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-call-function.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+<script type="text/javascript" src="js/jspsych-6.3.0/poldrack_plugins/jspsych-poldrack-categorize.js"></script>
+<script type="text/javascript" src="lib/jspsych-pavlovia-3.2.5.js"></script>
+
+<script src='stimuli.js'></script>
+<script src='experiment.js'></script>
+
+<script>
+$( document ).ready(function() {
+
+	var subject_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+	var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+	var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+	
+	var browser = navigator.userAgent;
+	var resolution = "W" + window.screen.availWidth + ",H" + window.screen.availHeight;
+	
+	jsPsych.data.addProperties({
+		subject_id: subject_id,
+		study_id: study_id,
+		session_id: session_id,
+		browser: browser,
+		resolution: resolution,
+		exp_id: 'lexical'
+	});
+	
+    jsPsych.init({
+             timeline: experiment_timeline,
+			 on_finish: function() {
+			 
+			if (!pav) {
+				jsPsych.data.get().localSave('csv','math_results.csv');
+			};
+
+			 window.location = "https://umich.qualtrics.com/jfe/form/SV_3Rk69Ze8m5NgiLI?PROLIFIC_PID=" + subject_id + "&STUDY_ID=" + study_id + "&SESSION_ID=" + session_id;
+			 }
+      });
+});
+</script>
+</body>
+</html>

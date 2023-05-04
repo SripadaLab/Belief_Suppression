@@ -1,0 +1,15 @@
+{
+    "cognitive_atlas_task_id": "trm_4f241ee9c4e37",
+    "instructions":"Respond to the stimuli on the screen.",
+    "description":"Expfactory experiment",
+    "url":"https://www.github.com/expfactory-experiments/shape-matching",
+    "contributors": [
+        "Ian Eisenberg",
+        "Vanessa Sochat"
+    ],
+    "exp_id": "shape-matching",
+    "name": "Shape Matching",
+    "reference": ["http://psycnet.apa.org/psycarticles/2013-29647-001"],
+    "template": "jspsych",
+    "time": 20
+}
