@@ -105,12 +105,12 @@ nonwords.sort(() => Math.random() - 0.5);
 practice_words.sort(() => Math.random() - 0.5);
 practice_nonwords.sort(() => Math.random() - 0.5);
 
-var practice_len = 8
+var practice_len = 20
 // Trial types denoted by three letters for the relationship between:
 // probe-target, target-distractor, distractor-probe of the form
 // SDS where "S" = match and "D" = non-match, N = "Neutral"
 var trial_types = jsPsych.randomization.repeat(['ST', 'DT', 'SL','DL'],practice_len/4);
-var exp_len = 8;
+var exp_len = 240;
 var numblocks = 1;
 var choices = ['t','f'];
 
@@ -257,8 +257,8 @@ function create_trial(practice) {
 			timeout_message: '<div class = centerbox><div style="font-size:60px" class = block-text>Respond Faster!</div></div>',
 			timing_feedback_duration: feedback_duration,
 			show_stim_with_feedback: false,
-			timing_stim: 3000,
-			timing_response: 3000,
+			timing_stim: 4000,
+			timing_response: 4000,
 			timing_post_trial: 0
 	};
 	

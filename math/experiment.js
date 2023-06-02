@@ -123,12 +123,12 @@ for (var i = 1; i<11; i++) {
 }
 jsPsych.pluginAPI.preloadImages(shape_stim.concat(path+'mask.png'));
 
-var practice_len = 8
+var practice_len = 20
 // Trial types denoted by three letters for the relationship between:
 // probe-target, target-distractor, distractor-probe of the form
 // SDS where "S" = match and "D" = non-match, N = "Neutral"
 var trial_types = jsPsych.randomization.repeat(['ST', 'DT', 'SL','DL'],practice_len/4);
-var exp_len = 8;
+var exp_len = 240;
 var numblocks = 1;
 var choices = ['t','f'];
 

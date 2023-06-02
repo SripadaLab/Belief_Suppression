@@ -29,7 +29,7 @@ var factors = {
 
 
 var nstimuli = factors.type.length * factors.difficulty.length;
-var total_trials_per_block = 200;
+var total_trials_per_block = 240;
 var trial_reps_per_block = total_trials_per_block / nstimuli;
 
 var total_practice_trials = 20;
